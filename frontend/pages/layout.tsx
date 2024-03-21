@@ -6,7 +6,7 @@ interface LayoutProps {
 }
 const Layout = ({children}: LayoutProps) => {
   return (
-    <div className="page-layout" style={{width: '100%', padding: '0'}}>
+    <div className="page-layout" style={{width: '100%', height: '100%', padding: '0', backgroundColor: '#E6EDF5'}}>
       {children}
       <style jsx global>
         {globalStyles}
