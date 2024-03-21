@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <ThemeProvider theme={theme}>
       <Layout>
-        <div></div>
+        <div>Teste</div>
       </Layout>
     </ThemeProvider>
   )
