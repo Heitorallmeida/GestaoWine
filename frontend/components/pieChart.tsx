@@ -17,7 +17,7 @@ export default function GestPieChart (props: GestPieChartProps) {
     { name: 'B', value: props.data?.substring(0,2), color: '#E9EEF4' },
   ]
       return (
-        <PieChart width={300} height={200}>
+        <PieChart width={300} height={325}>
           <Pie
             dataKey="value"
             startAngle={180}
