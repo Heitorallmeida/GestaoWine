@@ -3,17 +3,18 @@ import styled from "styled-components";
 
 
 export const LogoWrapper = styled.div`
-  margin: 20px;
+  margin: 10px;
   width: 60%;
 `;
 
-export const Wrapper = styled.div`
-  height: 260px;
+export const HeaderWrapper = styled.div`
+  height: 150px;
   background: white;
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 50px;
+  margin-bottom: 15px;
+  box-shadow: 2px 2px 2px black;
 `;
 
 export const PieChartWrapper = styled.div`

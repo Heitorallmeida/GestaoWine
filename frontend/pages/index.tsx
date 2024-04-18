@@ -1,9 +1,12 @@
 'use client'
 import { ThemeProvider, Typography, createTheme } from "@mui/material";
+import WineBarIcon from '@mui/icons-material/WineBar';
 import Layout from "./layout";
 import Image from 'next/image'
 import dynamic from "next/dynamic"
 import * as S from './styles';
+import { useCallback, useEffect, useState } from "react";
+import { axios } from "./utils";
 
 
 const SimpleBarChartWithoutSSR = dynamic(
@@ -22,41 +25,107 @@ const SimpleLinearChartWithoutSSR = dynamic(
 );
 
 export default function Home() {
-    const theme = createTheme({
-        palette: {
-          primary: {
-            main: '#000000',
-          },
-          secondary: {
-            main: '#FFFFFF',
-          },
+  const [pieChartData, setPieChartData] = useState();
+  const [linearChart, setLinearChart] = useState<any[] | undefined>();
+  const [barChartData, setBarChartData] = useState<any[] | undefined>();
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#690101',
+      },
+      secondary: {
+        main: '#FFFFFF',
+      },
+    },
+  });
+
+    function dataAtualFormatada(date: Date){
+      var data = date,
+      dia  = data.getDate().toString().padStart(2, '0'),
+      mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
+      ano  = data.getFullYear();
+
+      return dia+"/"+mes+"/"+ano;
+  }
+
+    const fetchGraphData = useCallback(async () =>{
+      try{
+        const responseForeCast = await axios.post('http://localhost:8000/api/predict/forecast', {numberofdays: 15});
+        const forecast = await responseForeCast.data.prediction;
+        const forecastKeys = Object.keys(forecast);
+        const convertedForeCast = forecastKeys.map((key) => {
+          return {
+            name: dataAtualFormatada(new Date(key)),
+            vendas: forecast[key].toFixed()
+          }
+        });
+        setLinearChart(convertedForeCast);
+        
+        const responseForeCastByMonth = await axios.post('http://localhost:8000/api/predict/forecast/by-month', {numberofdays: 120})
+        const monthForecast = await responseForeCastByMonth.data.monthly_forecast;
+        console.log(monthForecast)
+        const data = [
+        {
+          "name": "Mes 1",
+          "venda": monthForecast[0].toFixed(),
         },
-      });
+        {
+          "name": "Mes 2",
+          "venda":  monthForecast[1].toFixed(),
+        },
+        {
+          "name": "Mes 3",
+          "venda":  monthForecast[2].toFixed(),
+        },
+        {
+          "name": "Mes 4",
+          "venda":  monthForecast[3].toFixed(),
+        },
+      ];
+        setBarChartData(data);
+        
+        const responseAccuracy = await axios.get('http://localhost:8000/api/accuracy')
+        const accuracy = await responseAccuracy.data.accuracy;
+        setPieChartData(accuracy);
+      } catch(error) {
+        console.info(error)
+      }
+      
+      
+    },[])
+
+    useEffect(()=>{
+      void fetchGraphData()
+    },[fetchGraphData])
 
   return (
     <ThemeProvider theme={theme}>
       <Layout>
-        <S.Wrapper>
+        <S.HeaderWrapper>
           <S.LogoWrapper>
-            <Image alt='logo' width={300} height={60} src='/gasGest.svg' />
+            <WineBarIcon color="primary" style={{width: 200, height: 60}} />
           </S.LogoWrapper>
           <div style={{width: '50%', justifyContent: 'end', display: 'flex', marginRight: '80px'}}>
             <Typography fontWeight={400} color='#23306A' variant='h5'>Gerenciando sua loja: <br/>superando os desafios do seu negócio</Typography>
           </div>
-        </S.Wrapper>
-        <div style={{padding: '50px', background: '#E6EDF5'}}>
+        </S.HeaderWrapper>
+        <div style={{padding: '20px 50px 50px 50px', background: '#E6EDF5'}}>
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', gap: '20px'}}>
             <S.PieChartWrapper>
-              <SimplePieChartWithoutSSR />
-              <Typography fontWeight={400} color='#23306A' variant='h6' style={{position: 'absolute', bottom: '15%'}}>75%</Typography>
+              <Typography fontWeight={400} color='#23306A' variant='h6' style={{position: 'absolute', top: '2%', left: '5%'}}>Acuracia</Typography>
+              <SimplePieChartWithoutSSR data={pieChartData} />
+              <Typography fontWeight={400} color='#23306A' variant='h6' style={{position: 'absolute', bottom: '15%'}}>{pieChartData}</Typography>
             </S.PieChartWrapper>
-            <div style={{width: '70%', display: 'flex', height: '336px', background: 'white', borderRadius: '15px', alignItems: 'end'}}>
-              <SimpleLinearChartWithoutSSR />
+            <div style={{width: '70%', display: 'flex', height: '336px', background: 'white', borderRadius: '15px', alignItems: 'end', position: 'relative'}}>
+              <Typography fontWeight={400} color='#23306A' variant='h6' style={{position: 'absolute', top: '2%', left: '2%'}}>Previsão dia</Typography>
+              <SimpleLinearChartWithoutSSR data={linearChart}/>
             </div>
           </div>
           <div style={{display: 'flex', alignItems: 'end', width: '100%', margin: '20px 0px'}}>
-            <div suppressHydrationWarning style={{display: 'flex', width: '100%', height: '336px', background: 'white', borderRadius: '15px', justifyContent: 'center', alignItems: 'center'}}>
-                <SimpleBarChartWithoutSSR />
+            <div suppressHydrationWarning style={{display: 'flex', width: '100%', height: '336px', background: 'white', borderRadius: '15px', justifyContent: 'center', alignItems: 'center', position: 'relative'}}>
+                <Typography fontWeight={400} color='#23306A' variant='h6' style={{position: 'absolute', top: '2%', left: '2%'}}>Previsão mês</Typography>
+                <SimpleBarChartWithoutSSR data={barChartData}/>
             </div>
           </div>
         </div>

@@ -40,13 +40,16 @@ const data = [
   },
 ];
 
-export default function LinearChart () {
+type LinearChartProps ={
+  data: any[] | undefined;
+}
+export default function LinearGasChart (props: LinearChartProps) {
   return (
     <ResponsiveContainer width="95%" height="90%">
       <LineChart
         width={400}
         height={220}
-        data={data}
+        data={props.data}
         margin={{
           top: 5,
           right: 30,
@@ -59,8 +62,8 @@ export default function LinearChart () {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <Line type="monotone" dataKey="vendas" stroke="#82ca9d" />
+        <Line type="monotone" dataKey="vendas" stroke="#8884d8" activeDot={{ r: 8 }} />
+        {/* <Line type="monotone" dataKey="vendas" stroke="#82ca9d" /> */}
       </LineChart>
     </ResponsiveContainer>
   );
