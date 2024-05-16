@@ -27,3 +27,43 @@ export const PieChartWrapper = styled.div`
     border-radius: 15px;
     position: relative
 `;
+
+export const TitleWrapper = styled.div`
+    width: 50%;
+    justify-content: end;
+    display: flex;
+    margin-right: 80px;
+`;
+
+export const MainContainer = styled.div`
+    padding: 20px 50px 50px 50px; 
+    background: #E6EDF5;
+`;
+
+export const InputWrapper = styled.div`
+    display: flex;
+    align-items: end;
+    width: 99%;
+    height: 70px;
+    margin: 20px 0px;
+    background: white;
+    border-radius: 15px;
+    padding: 10px;
+    position: relative;
+`;
+
+export const LeftGraphsWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+`;
+
+export const RightGraphsWrapper = styled.div`
+    display: flex;
+    align-items: end;
+    width: 100%;
+    margin: 20px 0px;
+`;
+
+

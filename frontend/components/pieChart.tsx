@@ -11,7 +11,6 @@ type GestPieChartProps ={
   data: any;
 }
 export default function GestPieChart (props: GestPieChartProps) {
-  console.info(props.data?.substring(0,2))
   const data: any[] = [
     { name: 'A', value: 100 - Number(props.data?.substring(0,2)), color: '#C7417B' },
     { name: 'B', value: props.data?.substring(0,2), color: '#E9EEF4' },
