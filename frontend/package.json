@@ -32,14 +32,12 @@
     "react-tsparticles": "^2.9.3",
     "recharts": "^2.12.3",
     "resize-observer-polyfill": "^1.5.1",
-    "styled-components": "^5.3.10",
+    "styled-components": "^5.3.11",
     "tailwindcss": "3.3.2",
     "ts-node": "^10.9.2",
     "typescript": "5.0.4"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-jsx": "^7.24.1",
-    "@babel/preset-react": "^7.24.1",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
     "jest": "^29.7.0",
