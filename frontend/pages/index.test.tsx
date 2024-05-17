@@ -1,14 +1,21 @@
 
 import '@testing-library/jest-dom'
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import Home from ".";
 import * as useDataObject from "../hooks/useData";
-import { axios } from './utils';
 global.ResizeObserver = require("resize-observer-polyfill");
 
 // const useDataObject = { useData };
 const mockedWindowAlert = jest.fn();
 window.alert = mockedWindowAlert;
+
+jest.mock('../hooks/useData', () => {
+  return {
+    __esModule: true,    //    <----- this __esModule: true is important
+    ...jest.requireActual('../hooks/useData')
+  };
+});
+
 
 const setup = () => render(<Home />);
 
@@ -27,8 +34,8 @@ jest.spyOn(useDataObject, 'useData').mockReturnValue(useDataReturn);
 
 
 jest.mock('axios', () => ({
-    post: jest.fn(),
-    get: jest.fn(),
+    post: jest.fn().mockResolvedValue({ data: { prediction: { '2021-09-01': 10 } } }),
+    get: jest.fn().mockRejectedValue({})
 }));
 
 
@@ -37,7 +44,7 @@ jest.mock("recharts", () => {
     const OriginalModule = jest.requireActual("recharts");
     return {
       ...OriginalModule,
-      ResponsiveContainer: ({ children }) => (
+      ResponsiveContainer: ({ children }: any) => (
         <OriginalModule.ResponsiveContainer width={800} height={800}>
           {children}
         </OriginalModule.ResponsiveContainer>
@@ -49,6 +56,21 @@ jest.mock("recharts", () => {
 
 describe('Page', () => {
     it('should render title', () => {
+      jest.mock('../hooks/useData', () => {
+        return {
+          __esModule: true,    //    <----- this __esModule: true is important
+          ...jest.requireActual('../hooks/useData'),
+          ...useDataReturn
+        };
+      });
+      jest.spyOn(useDataObject, 'useData').mockImplementation(()=>({
+        pieChartData: '14',
+        linearChart: [],
+        barChartData: [],
+        numberOfDays: 7,
+        setNumberOfDays: jest.fn(),
+        fetchGraphData: jest.fn(),
+    }));
         
         const { getByText } = setup();
     
@@ -58,28 +80,35 @@ describe('Page', () => {
     })
     
     it('should update number of days', () => {
+      jest.mock('../hooks/useData', () => {
+        return {
+          __esModule: true,    //    <----- this __esModule: true is important
+          ...jest.requireActual('../hooks/useData'),
+          ...useDataReturn,
+        };
+      });
         const mock = jest.fn();
-        jest.spyOn(useDataObject, 'useData').mockReturnValue({
+        jest.spyOn(useDataObject, 'useData').mockImplementation(()=>({
             pieChartData: '14',
             linearChart: [],
             barChartData: [],
             numberOfDays: 7,
             setNumberOfDays: mock,
             fetchGraphData: jest.fn(),
-        });
+        }));
         const { getByRole } = setup();
     
         const input = getByRole('textbox', {name: ''});
     
-        fireEvent.change(input, { target: { value: 10 } });
+        act(()=>fireEvent.change(input, { target: { value: 10 } }))
 
         expect(mock).toHaveBeenCalled();
 
-        fireEvent.change(input, { target: { value: 130 } });
+        act(()=>fireEvent.change(input, { target: { value: 130 } }));
         
         expect(mockedWindowAlert).toHaveBeenCalled();
        
-        fireEvent.change(input, { target: { value: -1 } });
+        act(()=>fireEvent.change(input, { target: { value: -1 } }));
         
         expect(mockedWindowAlert).toHaveBeenCalled();
     })

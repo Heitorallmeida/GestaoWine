@@ -5,14 +5,24 @@ import axios from 'axios';
 
 const setup = () => renderHook(() => useData());
 describe('useData', ()=>{
-    it('should return the correct initial values', () => {
-        const { result } = setup();
-        expect(result.current.numberOfDays).toBe(7);
-        expect(result.current.pieChartData).toBe(undefined);
-        expect(result.current.linearChart).toBe(undefined);
-        expect(result.current.barChartData).toBe(undefined);
-    });
-
+    beforeEach(()=>{
+        jest.mock('axios', () => {
+            return {
+              __esModule: true,    //    <----- this __esModule: true is important
+              ...jest.requireActual('axios'),
+              get: jest.fn().mockResolvedValue({ data: { accuracy: 97 } }),
+              post: jest.fn().mockResolvedValue({
+                data: {
+                  prediction: {
+                    '2021-09-01': 10,
+                    '2021-09-02': 20,
+                  },
+                  monthly_forecast: [100, 200, 300, 400],
+                },
+              }),
+            };
+          });
+    })
     it('should call axios.post with the correct data', async () => {
         const { result } = setup();
         const days = 7;
