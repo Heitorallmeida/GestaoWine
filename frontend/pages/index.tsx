@@ -1,11 +1,12 @@
 'use client'
 
-import { Input, ThemeProvider, Typography, createTheme } from "@mui/material";
+import { Input, Typography } from "@mui/material";
 import WineBarIcon from '@mui/icons-material/WineBar';
+import { useData } from "../hooks/useData";
+
 import Layout from "./layout";
 import dynamic from "next/dynamic"
 import * as S from './styles';
-import { useData } from "../hooks/useData";
 
 
 
