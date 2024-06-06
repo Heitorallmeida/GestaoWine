@@ -22,12 +22,8 @@ bash
 
     pip install -r requirements.txt
 
-    Instale o uvicorn:
-
-    pip install uvicorn
-    pip install pmdarima
-
 Uso
+
     Execute o programa:
 
     uvicorn main:app
