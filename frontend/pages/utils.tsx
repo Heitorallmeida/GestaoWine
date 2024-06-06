@@ -1,1 +1,5 @@
-export const axios = require('axios');
+export const axios = require("axios");
+
+const utils = () => {};
+
+export default utils;
