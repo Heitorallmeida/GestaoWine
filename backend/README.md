@@ -4,7 +4,7 @@ Instalação
 
     Clone o repositório:
 
-    git clone https://github.com/GuilhermeAlencarM/forecast-prediction
+    git clone https://github.com/GuilhermeAlencarM/GestaoAI.git
 
 
 
