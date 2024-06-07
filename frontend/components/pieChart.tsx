@@ -24,7 +24,7 @@ export default function GestPieChart(props: GestPieChartProps) {
       <Pie
         dataKey="value"
         startAngle={180}
-        endAngle={0}
+        endAngle={10}
         data={data}
         cx={cx}
         cy={cy}
