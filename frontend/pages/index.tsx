@@ -1,96 +1,140 @@
 "use client";
 
-import { Button, Typography } from "@mui/material";
-import Image from "next/image";
+import { Input, Typography } from "@mui/material";
+import WineBarIcon from "@mui/icons-material/WineBar";
+import AddchartRoundedIcon from '@mui/icons-material/AddchartRounded';
+import { useData } from "../hooks/useData";
 
 import Layout from "./layout";
-import * as S from "./home.styles";
-import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+import * as S from "./styles";
+
+const SimpleBarChartWithoutSSR = dynamic(import("../components/barchart"), {
+  ssr: false,
+});
+
+const SimplePieChartWithoutSSR = dynamic(import("../components/pieChart"), {
+  ssr: false,
+});
+
+const SimpleLinearChartWithoutSSR = dynamic(
+  import("../components/linearChart"),
+  { ssr: false }
+);
 
 export default function Home() {
-  const router = useRouter();
+  const useDataHook = useData();
 
   return (
     <Layout>
       <S.HeaderWrapper>
         <S.LogoWrapper>
-          <Image src={"/icon.png"} alt="icon" width={466} height={71} />
+          <AddchartRoundedIcon style={{ color: '#B84B7A', width: 200, height: 60 }} />
         </S.LogoWrapper>
         <S.TitleWrapper>
           <Typography fontWeight={400} color="#23306A" variant="h5">
-            <strong>Prevendo suas proximas vendas: </strong>
-            <br />
+            <strong>Prevendo suas proximas vendas: </strong><br />
             Superando os desafios do seu negócio.
           </Typography>
         </S.TitleWrapper>
       </S.HeaderWrapper>
+
       <S.MainContainer>
-        <S.LeftSection>
-          <Typography
-            fontWeight={600}
-            color="#B84B7A"
-            variant={"h6"}
-            fontSize={20}
-          >
-            Conheça:
-          </Typography>
-          <Typography
-            fontWeight={600}
-            color="#141E32"
-            variant={"h3"}
-            fontSize={36}
-          >
-            Antecipe as demandas com
-          </Typography>
-          <Typography
-            fontWeight={600}
-            color="#B84B7A"
-            variant={"h3"}
-            fontSize={36}
-          >
-            Previsões de vendas precisas.
-          </Typography>
-          <Typography
-            fontWeight={600}
-            color="#141E32"
-            variant={"h3"}
-            fontSize={36}
-          >
-            precisas.
-          </Typography>
+        <S.InputWrapper>
           <Typography
             fontWeight={400}
-            color="#969696"
-            variant={"h3"}
-            fontSize={12}
-            maxWidth={500}
+            color="#23306A"
+            variant="h6"
+            style={{ position: "absolute", top: "15%", left: "15px" }}
           >
-            Quer aumentar as vendas e otimizar o estoque da sua loja? A
-            SalesPredictor utiliza inteligência artificial e análise de dados
-            avançada para fornecer previsões de vendas precisas, auxiliando em
-            decisões estratégicas para o seu negócio.
+            Número de dias para previsão de vendas:
           </Typography>
-          <S.ButtonsWrapper>
-            <S.RegisterButton
-              variant={"contained"}
-              onClick={() => router.push("/admin")}
+          <Input
+            placeholder="Número de dias"
+            style={{ width: "100%" }}
+            name="numberOfDays"
+            onChange={(event) => {
+              if (
+                Number(event.target.value) <= 0 &&
+                event.target.value !== ""
+              ) {
+                window.alert("O número de dias não pode ser menor ou igual 0.");
+              } else if (Number(event.target.value) >= 120) {
+                window.alert("O número de dias não pode ser maior que 120.");
+              } else {
+                useDataHook.setNumberOfDays(Number(event.target.value));
+              }
+            }}
+          />
+        </S.InputWrapper>
+
+        <S.LeftGraphsWrapper>
+          <S.PieChartWrapper>
+            <Typography
+              fontWeight={400}
+              color="#23306A"
+              variant="h6"
+              style={{ position: "absolute", top: "7%", left: "5%" }}
             >
-              Registrar
-            </S.RegisterButton>
-            <S.DemoButton
-              fontWeight={500}
-              color="#141E32"
-              variant={"h3"}
-              fontSize={20}
-              onClick={() => router.push("/dashboard")}
+              Acurácia
+            </Typography>
+            <SimplePieChartWithoutSSR data={useDataHook.pieChartData} />
+            <Typography
+              fontWeight={400}
+              color="#23306A"
+              variant="h6"
+              style={{ position: "absolute", bottom: "8%" }}
             >
-              Testar demo
-            </S.DemoButton>
-          </S.ButtonsWrapper>
-        </S.LeftSection>
-        <S.RightSection>
-          <Image src={"/homeGraph.png"} alt="icon" width={560} height={369} />
-        </S.RightSection>
+              {useDataHook.pieChartData}
+            </Typography>
+          </S.PieChartWrapper>
+          <div
+            style={{
+              width: "70%",
+              display: "flex",
+              height: "336px",
+              background: "white",
+              borderRadius: "15px",
+              alignItems: "end",
+              position: "relative",
+            }}
+          >
+            <Typography
+              fontWeight={400}
+              color="#23306A"
+              variant="h6"
+              style={{ position: "absolute", top: "2%", left: "2%" }}
+            >
+              Previsão por dia
+            </Typography>
+            <SimpleLinearChartWithoutSSR data={useDataHook.linearChart} />
+          </div>
+        </S.LeftGraphsWrapper>
+        <S.RightGraphsWrapper>
+          <div
+            suppressHydrationWarning
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "336px",
+              background: "white",
+              borderRadius: "15px",
+              justifyContent: "center",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <Typography
+              fontWeight={400}
+              color="#23306A"
+              variant="h6"
+              style={{ position: "absolute", top: "5%", left: "2%" }}
+            >
+              Previsão por mês
+            </Typography>
+            <SimpleBarChartWithoutSSR data={useDataHook.barChartData} />
+          </div>
+        </S.RightGraphsWrapper>
       </S.MainContainer>
     </Layout>
   );
