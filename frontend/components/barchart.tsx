@@ -15,7 +15,7 @@ type GestBarChartProps = {
 };
 export default function GestBarChart(props: GestBarChartProps) {
   return (
-    <ResponsiveContainer width="90%" height="80%">
+    <ResponsiveContainer width="90%" height="70%">
       <BarChart height={250} data={props.data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
